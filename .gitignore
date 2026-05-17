@@ -1,0 +1,12 @@
+# archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# archivos de configuracion del editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# logs
+*.log

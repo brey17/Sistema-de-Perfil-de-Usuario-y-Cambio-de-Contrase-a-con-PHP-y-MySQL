@@ -1,0 +1,52 @@
+# archivo para levantar el proyecto con docker
+# incluye php con apache, mysql y phpmyadmin
+
+services:
+  # servicio de php con apache para servir el sitio
+  web:
+    image: php:8.2-apache
+    container_name: sistema_login_web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+    command: >
+      bash -c "docker-php-ext-install mysqli && apache2-foreground"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: sistema_login
+
+  # servicio de base de datos mysql
+  mysql:
+    image: mysql:8.0
+    container_name: sistema_login_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sistema_login
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/database.sql:/docker-entrypoint-initdb.d/database.sql
+
+  # phpmyadmin para administrar la base de datos desde el navegador
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: sistema_login_pma
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
